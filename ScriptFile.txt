@@ -1,0 +1,44 @@
+import pandas as pd
+import numpy as np
+dfn = pd.DataFrame({'From_To': ['LoNDon_paris', 'MAdrid_miLAN', 'londON_StockhOlm',
+'Budapest_PaRis', 'Brussels_londOn'],
+'FlightNumber': [10045, np.nan, 10065, np.nan, 10085],
+'RecentDelays': [[23, 47], [], [24, 43, 87], [13], [67, 32]],
+'Airline': ['KLM(!)', '<Air France> (12)', '(British Airways. )',
+'12. Air France', '"Swiss Air"']})
+dfn
+
+
+
+#1. Some values in the the FlightNumber column are missing. These numbers are meant to increase by 10 with each row so 10055 and 10075 need to be put in place. Fill in
+#these missing numbers and make the column an integer column (instead of a float column).
+dfn['FlightNumber'] = dfn['FlightNumber'].interpolate().astype(int)
+dfn
+
+
+
+2#
+
+tdf=pd.DataFrame(dfn.From_To)
+tdf[['From', 'To']] = tdf.From_To.str.split('_', expand = True)
+tdf
+
+
+3##
+
+tdf['From']=tdf['From'].str.capitalize()
+tdf['To']=tdf['To'].str.capitalize()
+tdf
+
+
+4###
+dfn.drop("From_To",1,inplace=True)
+dfn=pd.concat([tdf,dfn], axis = 1)
+dfn
+
+
+5###
+delays=dfn['RecentDelays'].apply(pd.Series)
+delays = delays.rename(columns = lambda x : 'delay' + str(x))
+dfn=pd.concat([dfn,delays], axis = 1)
+dfn
